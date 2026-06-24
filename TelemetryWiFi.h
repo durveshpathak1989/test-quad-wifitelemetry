@@ -1,3 +1,10 @@
+/*
+ * Name: TelemetryWiFi.h
+ * Use: Declaration for WiFi telemetry, tuning, OTA, log, and timing HTTP endpoints.
+ * Version: 4.0.0
+ * Created by: Durvesh Pathak dp676@cornell.edu
+ */
+
 /**
  * ============================================================
  *  TelemetryWiFi.h — ESP32 Wi-Fi Hotspot Telemetry Subsystem

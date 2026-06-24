@@ -1,3 +1,10 @@
+/*
+ * Name: TelemetryWiFi.cpp
+ * Use: Implementation of WiFi telemetry, tuning, OTA, log, and timing HTTP endpoints.
+ * Version: 4.0.0
+ * Created by: Durvesh Pathak dp676@cornell.edu
+ */
+
 /**
  * ============================================================
  *  TelemetryWiFi.cpp — v2.4  (timing endpoints added)
