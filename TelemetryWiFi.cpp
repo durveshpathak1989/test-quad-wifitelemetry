@@ -58,6 +58,7 @@ TelemetryWiFi::TelemetryWiFi(uint16_t port)
       _timingCsvProvider(nullptr),
       _timingResetHandler(nullptr),
       _spectrumProvider(nullptr),
+      _identityProvider(nullptr),
       _flightLogCount(nullptr),
       _flightLogHeader(nullptr),
       _flightLogRow(nullptr),
@@ -92,6 +93,7 @@ void TelemetryWiFi::setTimingProvider(String (*p)())                       { _ti
 void TelemetryWiFi::setTimingCsvProvider(String (*p)())                    { _timingCsvProvider    = p; }
 void TelemetryWiFi::setTimingResetHandler(void (*h)())                     { _timingResetHandler   = h; }
 void TelemetryWiFi::setSpectrumProvider(String (*p)())                         { _spectrumProvider     = p; }
+void TelemetryWiFi::setIdentityProvider(String (*p)())                     { _identityProvider     = p; }
 void TelemetryWiFi::update()                                               { _server.handleClient(); }
 
 void TelemetryWiFi::setFlightLogCountProvider(uint16_t (*p)())     { _flightLogCount  = p; }
@@ -125,6 +127,8 @@ void TelemetryWiFi::_setupRoutes()
     _server.on("/",               HTTP_GET,     [this]() { _handleRoot(); });
     _server.on("/telemetry",      HTTP_GET,     [this]() { _handleTelemetry(); });
     _server.on("/telemetry",      HTTP_OPTIONS, [this]() { _handleOptions(); });
+    _server.on("/identity",       HTTP_GET,     [this]() { _handleIdentity(); });
+    _server.on("/identity",       HTTP_OPTIONS, [this]() { _handleOptions(); });
     _server.on("/tune",           HTTP_POST,    [this]() { _handleTune(); });
     _server.on("/tune",           HTTP_OPTIONS, [this]() { _handleOptions(); });
     _server.on("/update",         HTTP_GET,     [this]() { _handleOtaPage(); });
@@ -162,6 +166,7 @@ void TelemetryWiFi::_handleRoot()
     _server.send(200, "text/plain",
         "ESP32 Drone Telemetry v2.4\n"
         "GET  /telemetry        — full state JSON\n"
+        "GET  /identity         — firmware build identity JSON\n"
         "POST /tune             — apply runtime tuning levers (disarmed only)\n"
         "GET/POST /update       — Web OTA firmware update (safe/disarmed only)\n"
         "GET  /log?since=N      — calibration log lines\n"
@@ -185,6 +190,17 @@ void TelemetryWiFi::_handleTelemetry()
         return;
     }
     _server.send(200, "application/json", _jsonFromPacket(p));
+}
+
+void TelemetryWiFi::_handleIdentity()
+{
+    _requestCount++;
+    _sendCorsHeaders();
+    if (!_identityProvider) {
+        _server.send(503, "application/json", "{\"ok\":false,\"error\":\"no identity provider\"}");
+        return;
+    }
+    _server.send(200, "application/json", _identityProvider());
 }
 
 void TelemetryWiFi::_handleTiming()

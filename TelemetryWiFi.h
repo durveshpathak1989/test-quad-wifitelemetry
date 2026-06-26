@@ -319,6 +319,7 @@ public:
     void setTimingCsvProvider(String (*provider)());
     void setTimingResetHandler(void (*handler)());
     void setSpectrumProvider(String (*provider)());
+    void setIdentityProvider(String (*provider)());
 
     void pushLog(const char* line);
     void pushLog(const String& line) { pushLog(line.c_str()); }
@@ -346,6 +347,7 @@ private:
     String   (*_timingCsvProvider)();
     void     (*_timingResetHandler)();
     String   (*_spectrumProvider)();
+    String   (*_identityProvider)();
 
     uint32_t   _requestCount;
 
@@ -373,6 +375,7 @@ private:
     void _handleTimingReset();
     void _handleTimingCsv();
     void _handleSpectrum();
+    void _handleIdentity();
     void _handleFlightLogCsv();
     void _handleFlightLogReset();
     void _handleOptions();
