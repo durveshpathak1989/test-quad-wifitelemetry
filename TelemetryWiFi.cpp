@@ -571,8 +571,11 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JI(",\"loopJitterUs\":", p.loop_jitter_us);
     JU(",\"imuReadUs\":", p.imu_read_us);
     JU(",\"rcReadUs\":", p.rc_read_us);
+    JU(",\"ahrsUpdateUs\":", p.ahrs_update_us);
     JU(",\"controlUpdateUs\":", p.control_update_us);
     JU(",\"motorWriteUs\":", p.motor_write_us);
+    JU(",\"wifiServiceUs\":", p.wifi_service_us);
+    JU(",\"onboardLogWriteUs\":", p.onboard_log_write_us);
     JU(",\"missedLoopCount\":", p.missed_loop_count);
     JF(",\"rpmFL\":", p.rpm_fl, 0);
     JF(",\"rpmFR\":", p.rpm_fr, 0);
