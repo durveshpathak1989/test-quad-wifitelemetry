@@ -94,7 +94,12 @@ struct TelemetryPacket {
     float throttle, rc_roll, rc_pitch, rc_yaw, rc_hz;
 
     float motor_fl, motor_fr, motor_rl, motor_rr;
+    float motor_fl_pre_sat, motor_fr_pre_sat, motor_rl_pre_sat, motor_rr_pre_sat;
     bool  motor_saturated;
+    float battery_voltage_v;
+    uint32_t loop_period_us, imu_read_us, rc_read_us, control_update_us, motor_write_us;
+    int16_t loop_jitter_us;
+    uint32_t missed_loop_count;
     // Commanded/estimated RPM from motor output × KV × Vbat.
     float rpm_fl,   rpm_fr,   rpm_rl,   rpm_rr;
     float cmd_rpm_fl, cmd_rpm_fr, cmd_rpm_rl, cmd_rpm_rr;

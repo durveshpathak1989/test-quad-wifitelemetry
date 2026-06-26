@@ -32,6 +32,14 @@ static void appendJsonUInt(String& out, const __FlashStringHelper* key, uint32_t
     out += buf;
 }
 
+static void appendJsonInt(String& out, const __FlashStringHelper* key, int32_t value)
+{
+    char buf[12];
+    ltoa(value, buf, 10);
+    out += key;
+    out += buf;
+}
+
 static void appendJsonBool(String& out, const __FlashStringHelper* key, bool value)
 {
     out += key;
@@ -500,6 +508,7 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
 {
 #define JF(key, value, decimals) appendJsonFloat(j, F(key), (value), (decimals))
 #define JU(key, value) appendJsonUInt(j, F(key), (uint32_t)(value))
+#define JI(key, value) appendJsonInt(j, F(key), (int32_t)(value))
 #define JB(key, value) appendJsonBool(j, F(key), (value))
     String j;
     j.reserve(6500);
@@ -553,6 +562,18 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"motFR\":", p.motor_fr, 3);
     JF(",\"motRL\":", p.motor_rl, 3);
     JF(",\"motRR\":", p.motor_rr, 3);
+    JF(",\"motorFLPreSat\":", p.motor_fl_pre_sat, 4);
+    JF(",\"motorFRPreSat\":", p.motor_fr_pre_sat, 4);
+    JF(",\"motorRLPreSat\":", p.motor_rl_pre_sat, 4);
+    JF(",\"motorRRPreSat\":", p.motor_rr_pre_sat, 4);
+    JF(",\"batteryVoltageV\":", p.battery_voltage_v, 3);
+    JU(",\"loopPeriodUs\":", p.loop_period_us);
+    JI(",\"loopJitterUs\":", p.loop_jitter_us);
+    JU(",\"imuReadUs\":", p.imu_read_us);
+    JU(",\"rcReadUs\":", p.rc_read_us);
+    JU(",\"controlUpdateUs\":", p.control_update_us);
+    JU(",\"motorWriteUs\":", p.motor_write_us);
+    JU(",\"missedLoopCount\":", p.missed_loop_count);
     JF(",\"rpmFL\":", p.rpm_fl, 0);
     JF(",\"rpmFR\":", p.rpm_fr, 0);
     JF(",\"rpmRL\":", p.rpm_rl, 0);
@@ -644,6 +665,9 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"pidRollOut\":", p.pid_roll_out, 6);
     JF(",\"pidPitchOut\":", p.pid_pitch_out, 6);
     JF(",\"pidYawOut\":", p.pid_yaw_out, 6);
+    JF(",\"ekfBgxDps\":", p.ekf_bgx_dps, 6);
+    JF(",\"ekfBgyDps\":", p.ekf_bgy_dps, 6);
+    JF(",\"ekfBgzDps\":", p.ekf_bgz_dps, 6);
     JB(",\"motorSaturated\":", p.motor_saturated);
     // Runtime tuning values serialized at 8 dp where useful so very small
     // gains like 0.00001 survive the telemetry round trip.
@@ -713,6 +737,7 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JU(",\"gpsSec\":", p.gps_second);
     j += '}';
 #undef JB
+#undef JI
 #undef JU
 #undef JF
     return j;
