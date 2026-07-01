@@ -143,6 +143,7 @@ struct TelemetryPacket {
     float pid_roll_kp,  pid_roll_ki,  pid_roll_kd;
     float pid_pitch_kp, pid_pitch_ki, pid_pitch_kd;
     float pid_yaw_kp,   pid_yaw_ki,   pid_yaw_kd;
+    float pid_roll_ff,  pid_pitch_ff,  pid_yaw_ff;
 
     // Outer angle loop PID
     float pid_angle_roll_kp,  pid_angle_roll_ki,  pid_angle_roll_kd;
@@ -220,6 +221,7 @@ struct TunePacket {
     bool has_pid_roll_kp,  has_pid_roll_ki,  has_pid_roll_kd;
     bool has_pid_pitch_kp, has_pid_pitch_ki, has_pid_pitch_kd;
     bool has_pid_yaw_kp,   has_pid_yaw_ki,   has_pid_yaw_kd;
+    bool has_pid_roll_ff,  has_pid_pitch_ff,  has_pid_yaw_ff;
 
     // Outer angle loop PID
     bool has_pid_angle_roll_kp,  has_pid_angle_roll_ki,  has_pid_angle_roll_kd;
@@ -269,6 +271,7 @@ struct TunePacket {
     float pid_roll_kp,  pid_roll_ki,  pid_roll_kd;
     float pid_pitch_kp, pid_pitch_ki, pid_pitch_kd;
     float pid_yaw_kp,   pid_yaw_ki,   pid_yaw_kd;
+    float pid_roll_ff,  pid_pitch_ff,  pid_yaw_ff;
 
     float pid_angle_roll_kp,  pid_angle_roll_ki,  pid_angle_roll_kd;
     float pid_angle_pitch_kp, pid_angle_pitch_ki, pid_angle_pitch_kd;
