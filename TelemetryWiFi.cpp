@@ -462,6 +462,9 @@ void TelemetryWiFi::_handleTune()
     tryF("pid_roll_ff",             t.has_pid_roll_ff,             t.pid_roll_ff);
     tryF("pid_pitch_ff",            t.has_pid_pitch_ff,            t.pid_pitch_ff);
     tryF("pid_yaw_ff",              t.has_pid_yaw_ff,              t.pid_yaw_ff);
+    tryF("pid_roll_d_lpf_hz",       t.has_pid_roll_d_lpf_hz,       t.pid_roll_d_lpf_hz);
+    tryF("pid_pitch_d_lpf_hz",      t.has_pid_pitch_d_lpf_hz,      t.pid_pitch_d_lpf_hz);
+    tryF("pid_yaw_d_lpf_hz",        t.has_pid_yaw_d_lpf_hz,        t.pid_yaw_d_lpf_hz);
 
     // Outer angle loop PID
     tryF("pid_angle_roll_kp",       t.has_pid_angle_roll_kp,       t.pid_angle_roll_kp);
@@ -719,6 +722,9 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"pidRollFf\":", p.pid_roll_ff, 8);
     JF(",\"pidPitchFf\":", p.pid_pitch_ff, 8);
     JF(",\"pidYawFf\":", p.pid_yaw_ff, 8);
+    JF(",\"pidRollDLpfHz\":", p.pid_roll_d_lpf_hz, 3);
+    JF(",\"pidPitchDLpfHz\":", p.pid_pitch_d_lpf_hz, 3);
+    JF(",\"pidYawDLpfHz\":", p.pid_yaw_d_lpf_hz, 3);
     JF(",\"pidAngleRollKp\":", p.pid_angle_roll_kp, 8);
     JF(",\"pidAngleRollKi\":", p.pid_angle_roll_ki, 8);
     JF(",\"pidAngleRollKd\":", p.pid_angle_roll_kd, 8);
