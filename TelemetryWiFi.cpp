@@ -449,6 +449,19 @@ void TelemetryWiFi::_handleTune()
     tryF("idle_ramp_end",           t.has_idle_ramp_end,           t.idle_ramp_end);
     tryF("descent_protect_min_active_m", t.has_descent_protect_min_active_m, t.descent_protect_min_active_m);
     if (!t.has_descent_protect_min_active_m) { tryF("descentProtectMinActiveM", t.has_descent_protect_min_active_m, t.descent_protect_min_active_m); }
+    tryB("vertical_hold_enable",    t.has_vertical_hold_enable,    t.vertical_hold_enable);
+    if (!t.has_vertical_hold_enable) { tryB("verticalHoldEnable", t.has_vertical_hold_enable, t.vertical_hold_enable); }
+    tryF("pid_vertical_kp",         t.has_pid_vertical_kp,         t.pid_vertical_kp);
+    tryF("pid_vertical_ki",         t.has_pid_vertical_ki,         t.pid_vertical_ki);
+    tryF("pid_vertical_kd",         t.has_pid_vertical_kd,         t.pid_vertical_kd);
+    tryF("vertical_hold_i_limit",   t.has_vertical_hold_i_limit,   t.vertical_hold_i_limit);
+    tryF("vertical_hold_output_limit", t.has_vertical_hold_output_limit, t.vertical_hold_output_limit);
+    tryF("vertical_hold_center_throttle", t.has_vertical_hold_center_throttle, t.vertical_hold_center_throttle);
+    tryF("vertical_hold_deadband",  t.has_vertical_hold_deadband,  t.vertical_hold_deadband);
+    tryF("vertical_hold_max_climb_rate_mps", t.has_vertical_hold_max_climb_rate_mps, t.vertical_hold_max_climb_rate_mps);
+    tryF("vertical_hold_min_active_m", t.has_vertical_hold_min_active_m, t.vertical_hold_min_active_m);
+    tryF("vertical_hold_max_tilt_deg", t.has_vertical_hold_max_tilt_deg, t.vertical_hold_max_tilt_deg);
+    tryF("vertical_hold_d_lpf_hz",  t.has_vertical_hold_d_lpf_hz,  t.vertical_hold_d_lpf_hz);
     tryF("pid_ilimit",              t.has_pid_ilimit,              t.pid_ilimit);
 
     // Inner rate loop PID
@@ -510,6 +523,12 @@ void TelemetryWiFi::_handleTune()
     if (!t.has_ekf_mag_yaw_offset_deg) { tryF("ekfMagYawOffsetDeg", t.has_ekf_mag_yaw_offset_deg, t.ekf_mag_yaw_offset_deg); }
     tryF("ekf_mag_yaw_sign",         t.has_ekf_mag_yaw_sign,         t.ekf_mag_yaw_sign);
     if (!t.has_ekf_mag_yaw_sign) { tryF("ekfMagYawSign", t.has_ekf_mag_yaw_sign, t.ekf_mag_yaw_sign); }
+    tryF("ekf_alt_accel_q",          t.has_ekf_alt_accel_q,          t.ekf_alt_accel_q);
+    if (!t.has_ekf_alt_accel_q) { tryF("ekfAltAccelQ", t.has_ekf_alt_accel_q, t.ekf_alt_accel_q); }
+    tryF("ekf_baro_alt_r",           t.has_ekf_baro_alt_r,           t.ekf_baro_alt_r);
+    if (!t.has_ekf_baro_alt_r) { tryF("ekfBaroAltR", t.has_ekf_baro_alt_r, t.ekf_baro_alt_r); }
+    tryF("ekf_tof_alt_r",            t.has_ekf_tof_alt_r,            t.ekf_tof_alt_r);
+    if (!t.has_ekf_tof_alt_r) { tryF("ekfTofAltR", t.has_ekf_tof_alt_r, t.ekf_tof_alt_r); }
 
     bool accepted = _tuneHandler(t);
     if (accepted) {
@@ -535,7 +554,7 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
 #define JI(key, value) appendJsonInt(j, F(key), (int32_t)(value))
 #define JB(key, value) appendJsonBool(j, F(key), (value))
     String j;
-    j.reserve(7200);
+    j.reserve(8200);
     j += F("{\"ok\":true");
     JU(",\"tick\":", p.tick);
     j += F(",\"mode\":\"");
@@ -583,6 +602,22 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"descentThrottleBoost\":", p.descent_throttle_boost, 3);
     JF(",\"descentProtectMinActiveM\":", p.descent_protect_min_active_m, 3);
     JB(",\"descentProtectActive\":", p.descent_protect_active);
+    JB(",\"verticalHoldAvailable\":", p.vertical_hold_available);
+    JB(",\"verticalHoldActive\":", p.vertical_hold_active);
+    JB(",\"verticalHoldHeightValid\":", p.vertical_hold_height_valid);
+    JB(",\"verticalHoldTiltLimited\":", p.vertical_hold_tilt_limited);
+    JF(",\"verticalHoldTargetM\":", p.vertical_hold_target_m, 3);
+    JF(",\"verticalHoldHeightM\":", p.vertical_hold_height_m, 3);
+    JF(",\"verticalHoldVelocityMps\":", p.vertical_hold_velocity_mps, 3);
+    JF(",\"verticalHoldErrorM\":", p.vertical_hold_error_m, 3);
+    JF(",\"verticalHoldThrottleAdjust\":", p.vertical_hold_throttle_adjust, 3);
+    JF(",\"verticalHoldPilotRateMps\":", p.vertical_hold_pilot_rate_mps, 3);
+    JF(",\"verticalHoldP\":", p.vertical_hold_p, 6);
+    JF(",\"verticalHoldI\":", p.vertical_hold_i, 6);
+    JF(",\"verticalHoldD\":", p.vertical_hold_d, 6);
+    JF(",\"ekfHeightM\":", p.ekf_height_m, 3);
+    JF(",\"ekfVerticalVelocityMps\":", p.ekf_vertical_velocity_mps, 3);
+    JB(",\"ekfHeightValid\":", p.ekf_height_valid);
     JF(",\"rcRoll\":", p.rc_roll, 3);
     JF(",\"rcPitch\":", p.rc_pitch, 3);
     JF(",\"rcYaw\":", p.rc_yaw, 3);
@@ -733,6 +768,18 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"motorMax\":", p.motor_max, 6);
     JF(",\"throttleCut\":", p.throttle_cut, 6);
     JF(",\"idleRampEnd\":", p.idle_ramp_end, 6);
+    JB(",\"verticalHoldEnable\":", p.vertical_hold_enable);
+    JF(",\"pidVerticalKp\":", p.pid_vertical_kp, 8);
+    JF(",\"pidVerticalKi\":", p.pid_vertical_ki, 8);
+    JF(",\"pidVerticalKd\":", p.pid_vertical_kd, 8);
+    JF(",\"verticalHoldILimit\":", p.vertical_hold_i_limit, 6);
+    JF(",\"verticalHoldOutputLimit\":", p.vertical_hold_output_limit, 6);
+    JF(",\"verticalHoldCenterThrottle\":", p.vertical_hold_center_throttle, 6);
+    JF(",\"verticalHoldDeadband\":", p.vertical_hold_deadband, 6);
+    JF(",\"verticalHoldMaxClimbRateMps\":", p.vertical_hold_max_climb_rate_mps, 6);
+    JF(",\"verticalHoldMinActiveM\":", p.vertical_hold_min_active_m, 3);
+    JF(",\"verticalHoldMaxTiltDeg\":", p.vertical_hold_max_tilt_deg, 3);
+    JF(",\"verticalHoldDLpfHz\":", p.vertical_hold_d_lpf_hz, 3);
     JF(",\"pidRollKp\":", p.pid_roll_kp, 8);
     JF(",\"pidRollKi\":", p.pid_roll_ki, 8);
     JF(",\"pidRollKd\":", p.pid_roll_kd, 8);
@@ -772,6 +819,9 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"ekfMagDeclinationDeg\":", p.ekf_mag_declination_deg, 3);
     JF(",\"ekfMagYawOffsetDeg\":", p.ekf_mag_yaw_offset_deg, 3);
     JF(",\"ekfMagYawSign\":", p.ekf_mag_yaw_sign, 1);
+    JF(",\"ekfAltAccelQ\":", p.ekf_alt_accel_q, 6);
+    JF(",\"ekfBaroAltR\":", p.ekf_baro_alt_r, 6);
+    JF(",\"ekfTofAltR\":", p.ekf_tof_alt_r, 6);
     JU(",\"tuneRequestSeq\":", p.tune_request_seq);
     JU(",\"tuneApplySeq\":", p.tune_apply_seq);
     JU(",\"tuneRejectSeq\":", p.tune_reject_seq);

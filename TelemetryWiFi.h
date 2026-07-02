@@ -99,6 +99,22 @@ struct TelemetryPacket {
     float throttle, protected_throttle, raw_throttle, descent_throttle_boost;
     float descent_protect_min_active_m;
     bool  descent_protect_active;
+    bool  vertical_hold_available;
+    bool  vertical_hold_active;
+    bool  vertical_hold_height_valid;
+    bool  vertical_hold_tilt_limited;
+    float vertical_hold_target_m;
+    float vertical_hold_height_m;
+    float vertical_hold_velocity_mps;
+    float vertical_hold_error_m;
+    float vertical_hold_throttle_adjust;
+    float vertical_hold_pilot_rate_mps;
+    float vertical_hold_p;
+    float vertical_hold_i;
+    float vertical_hold_d;
+    float ekf_height_m;
+    float ekf_vertical_velocity_mps;
+    bool  ekf_height_valid;
     float rc_roll, rc_pitch, rc_yaw, rc_hz;
 
     float motor_fl, motor_fr, motor_rl, motor_rr;
@@ -153,6 +169,18 @@ struct TelemetryPacket {
     float motor_max;
     float throttle_cut;
     float idle_ramp_end;
+    bool  vertical_hold_enable;
+    float pid_vertical_kp;
+    float pid_vertical_ki;
+    float pid_vertical_kd;
+    float vertical_hold_i_limit;
+    float vertical_hold_output_limit;
+    float vertical_hold_center_throttle;
+    float vertical_hold_deadband;
+    float vertical_hold_max_climb_rate_mps;
+    float vertical_hold_min_active_m;
+    float vertical_hold_max_tilt_deg;
+    float vertical_hold_d_lpf_hz;
 
     // Shared PID integrator clamp
     float pid_ilimit;
@@ -190,6 +218,9 @@ struct TelemetryPacket {
     float ekf_mag_declination_deg;
     float ekf_mag_yaw_offset_deg;
     float ekf_mag_yaw_sign;
+    float ekf_alt_accel_q;
+    float ekf_baro_alt_r;
+    float ekf_tof_alt_r;
 
     // Tune transaction diagnostics
     uint32_t tune_request_seq;
@@ -233,6 +264,18 @@ struct TunePacket {
     bool has_throttle_cut;
     bool has_idle_ramp_end;
     bool has_descent_protect_min_active_m;
+    bool has_vertical_hold_enable;
+    bool has_pid_vertical_kp;
+    bool has_pid_vertical_ki;
+    bool has_pid_vertical_kd;
+    bool has_vertical_hold_i_limit;
+    bool has_vertical_hold_output_limit;
+    bool has_vertical_hold_center_throttle;
+    bool has_vertical_hold_deadband;
+    bool has_vertical_hold_max_climb_rate_mps;
+    bool has_vertical_hold_min_active_m;
+    bool has_vertical_hold_max_tilt_deg;
+    bool has_vertical_hold_d_lpf_hz;
 
     // Shared PID integrator clamp
     bool has_pid_ilimit;
@@ -271,6 +314,9 @@ struct TunePacket {
     bool has_ekf_mag_declination_deg;
     bool has_ekf_mag_yaw_offset_deg;
     bool has_ekf_mag_yaw_sign;
+    bool has_ekf_alt_accel_q;
+    bool has_ekf_baro_alt_r;
+    bool has_ekf_tof_alt_r;
 
     float max_angle_deg;
     float max_rate_dps;
@@ -288,6 +334,18 @@ struct TunePacket {
     float throttle_cut;
     float idle_ramp_end;
     float descent_protect_min_active_m;
+    bool  vertical_hold_enable;
+    float pid_vertical_kp;
+    float pid_vertical_ki;
+    float pid_vertical_kd;
+    float vertical_hold_i_limit;
+    float vertical_hold_output_limit;
+    float vertical_hold_center_throttle;
+    float vertical_hold_deadband;
+    float vertical_hold_max_climb_rate_mps;
+    float vertical_hold_min_active_m;
+    float vertical_hold_max_tilt_deg;
+    float vertical_hold_d_lpf_hz;
     float pid_ilimit;
 
     float pid_roll_kp,  pid_roll_ki,  pid_roll_kd;
@@ -318,6 +376,9 @@ struct TunePacket {
     float ekf_mag_declination_deg;
     float ekf_mag_yaw_offset_deg;
     float ekf_mag_yaw_sign;
+    float ekf_alt_accel_q;
+    float ekf_baro_alt_r;
+    float ekf_tof_alt_r;
 };
 
 // ─────────────────────────────────────────────────────────────
