@@ -438,6 +438,34 @@ void TelemetryWiFi::_handleTune()
     tryF("roll_output_limit",       t.has_roll_output_limit,       t.roll_output_limit);
     tryF("pitch_output_limit",      t.has_pitch_output_limit,      t.pitch_output_limit);
     tryF("yaw_output_limit",        t.has_yaw_output_limit,        t.yaw_output_limit);
+    tryF("controller_mode",         t.has_controller_mode,         t.controller_mode);
+    if (!t.has_controller_mode) { tryF("controllerMode", t.has_controller_mode, t.controller_mode); }
+    tryF("lqi_roll_k_angle",        t.has_lqi_roll_k_angle,        t.lqi_roll_k_angle);
+    if (!t.has_lqi_roll_k_angle) { tryF("lqiRollKAngle", t.has_lqi_roll_k_angle, t.lqi_roll_k_angle); }
+    tryF("lqi_roll_k_rate",         t.has_lqi_roll_k_rate,         t.lqi_roll_k_rate);
+    if (!t.has_lqi_roll_k_rate) { tryF("lqiRollKRate", t.has_lqi_roll_k_rate, t.lqi_roll_k_rate); }
+    tryF("lqi_roll_k_int",          t.has_lqi_roll_k_int,          t.lqi_roll_k_int);
+    if (!t.has_lqi_roll_k_int) { tryF("lqiRollKInt", t.has_lqi_roll_k_int, t.lqi_roll_k_int); }
+    tryF("lqi_pitch_k_angle",       t.has_lqi_pitch_k_angle,       t.lqi_pitch_k_angle);
+    if (!t.has_lqi_pitch_k_angle) { tryF("lqiPitchKAngle", t.has_lqi_pitch_k_angle, t.lqi_pitch_k_angle); }
+    tryF("lqi_pitch_k_rate",        t.has_lqi_pitch_k_rate,        t.lqi_pitch_k_rate);
+    if (!t.has_lqi_pitch_k_rate) { tryF("lqiPitchKRate", t.has_lqi_pitch_k_rate, t.lqi_pitch_k_rate); }
+    tryF("lqi_pitch_k_int",         t.has_lqi_pitch_k_int,         t.lqi_pitch_k_int);
+    if (!t.has_lqi_pitch_k_int) { tryF("lqiPitchKInt", t.has_lqi_pitch_k_int, t.lqi_pitch_k_int); }
+    tryF("lqi_yaw_k_angle",         t.has_lqi_yaw_k_angle,         t.lqi_yaw_k_angle);
+    if (!t.has_lqi_yaw_k_angle) { tryF("lqiYawKAngle", t.has_lqi_yaw_k_angle, t.lqi_yaw_k_angle); }
+    tryF("lqi_yaw_k_rate",          t.has_lqi_yaw_k_rate,          t.lqi_yaw_k_rate);
+    if (!t.has_lqi_yaw_k_rate) { tryF("lqiYawKRate", t.has_lqi_yaw_k_rate, t.lqi_yaw_k_rate); }
+    tryF("lqi_yaw_k_int",           t.has_lqi_yaw_k_int,           t.lqi_yaw_k_int);
+    if (!t.has_lqi_yaw_k_int) { tryF("lqiYawKInt", t.has_lqi_yaw_k_int, t.lqi_yaw_k_int); }
+    tryF("lqi_i_limit",             t.has_lqi_i_limit,             t.lqi_i_limit);
+    if (!t.has_lqi_i_limit) { tryF("lqiILimit", t.has_lqi_i_limit, t.lqi_i_limit); }
+    tryF("lqi_roll_output_limit",   t.has_lqi_roll_output_limit,   t.lqi_roll_output_limit);
+    if (!t.has_lqi_roll_output_limit) { tryF("lqiRollOutputLimit", t.has_lqi_roll_output_limit, t.lqi_roll_output_limit); }
+    tryF("lqi_pitch_output_limit",  t.has_lqi_pitch_output_limit,  t.lqi_pitch_output_limit);
+    if (!t.has_lqi_pitch_output_limit) { tryF("lqiPitchOutputLimit", t.has_lqi_pitch_output_limit, t.lqi_pitch_output_limit); }
+    tryF("lqi_yaw_output_limit",    t.has_lqi_yaw_output_limit,    t.lqi_yaw_output_limit);
+    if (!t.has_lqi_yaw_output_limit) { tryF("lqiYawOutputLimit", t.has_lqi_yaw_output_limit, t.lqi_yaw_output_limit); }
 
     // Throttle shaping + motor output limits
     tryF("throttle_expo",           t.has_throttle_expo,           t.throttle_expo);
@@ -533,7 +561,7 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
 #define JI(key, value) appendJsonInt(j, F(key), (int32_t)(value))
 #define JB(key, value) appendJsonBool(j, F(key), (value))
     String j;
-    j.reserve(6500);
+    j.reserve(7600);
     j += F("{\"ok\":true");
     JU(",\"tick\":", p.tick);
     j += F(",\"mode\":\"");
@@ -691,6 +719,31 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"pidRollOut\":", p.pid_roll_out, 6);
     JF(",\"pidPitchOut\":", p.pid_pitch_out, 6);
     JF(",\"pidYawOut\":", p.pid_yaw_out, 6);
+    JU(",\"controller_mode\":", p.controller_mode);
+    JU(",\"controllerMode\":", p.controller_mode);
+    j += F(",\"controller_name\":\"");
+    j += p.controller_name ? p.controller_name : "PID";
+    j += '"';
+    j += F(",\"controllerName\":\"");
+    j += p.controller_name ? p.controller_name : "PID";
+    j += '"';
+    JB(",\"lqiActive\":", p.lqi_active);
+    JF(",\"lqiRollOut\":", p.lqi_roll_out, 6);
+    JF(",\"lqiPitchOut\":", p.lqi_pitch_out, 6);
+    JF(",\"lqiYawOut\":", p.lqi_yaw_out, 6);
+    JF(",\"lqiRollAngleTerm\":", p.lqi_roll_angle_term, 8);
+    JF(",\"lqiRollRateTerm\":", p.lqi_roll_rate_term, 8);
+    JF(",\"lqiRollITerm\":", p.lqi_roll_i_term, 8);
+    JF(",\"lqiPitchAngleTerm\":", p.lqi_pitch_angle_term, 8);
+    JF(",\"lqiPitchRateTerm\":", p.lqi_pitch_rate_term, 8);
+    JF(",\"lqiPitchITerm\":", p.lqi_pitch_i_term, 8);
+    JF(",\"lqiYawAngleTerm\":", p.lqi_yaw_angle_term, 8);
+    JF(",\"lqiYawRateTerm\":", p.lqi_yaw_rate_term, 8);
+    JF(",\"lqiYawITerm\":", p.lqi_yaw_i_term, 8);
+    JF(",\"lqiRollIntegrator\":", p.lqi_roll_integrator, 8);
+    JF(",\"lqiPitchIntegrator\":", p.lqi_pitch_integrator, 8);
+    JF(",\"lqiYawIntegrator\":", p.lqi_yaw_integrator, 8);
+    JB(",\"lqiOutputLimited\":", p.lqi_output_limited);
     JF(",\"ekfBgxDps\":", p.ekf_bgx_dps, 6);
     JF(",\"ekfBgyDps\":", p.ekf_bgy_dps, 6);
     JF(",\"ekfBgzDps\":", p.ekf_bgz_dps, 6);
@@ -703,6 +756,19 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"rollOutputLimit\":", p.roll_output_limit, 6);
     JF(",\"pitchOutputLimit\":", p.pitch_output_limit, 6);
     JF(",\"yawOutputLimit\":", p.yaw_output_limit, 6);
+    JF(",\"lqiRollKAngle\":", p.lqi_roll_k_angle, 8);
+    JF(",\"lqiRollKRate\":", p.lqi_roll_k_rate, 8);
+    JF(",\"lqiRollKInt\":", p.lqi_roll_k_int, 8);
+    JF(",\"lqiPitchKAngle\":", p.lqi_pitch_k_angle, 8);
+    JF(",\"lqiPitchKRate\":", p.lqi_pitch_k_rate, 8);
+    JF(",\"lqiPitchKInt\":", p.lqi_pitch_k_int, 8);
+    JF(",\"lqiYawKAngle\":", p.lqi_yaw_k_angle, 8);
+    JF(",\"lqiYawKRate\":", p.lqi_yaw_k_rate, 8);
+    JF(",\"lqiYawKInt\":", p.lqi_yaw_k_int, 8);
+    JF(",\"lqiILimit\":", p.lqi_i_limit, 6);
+    JF(",\"lqiRollOutputLimit\":", p.lqi_roll_output_limit, 6);
+    JF(",\"lqiPitchOutputLimit\":", p.lqi_pitch_output_limit, 6);
+    JF(",\"lqiYawOutputLimit\":", p.lqi_yaw_output_limit, 6);
     JF(",\"throttleExpo\":", p.throttle_expo, 6);
     JF(",\"throttleUpRatePerSec\":", p.throttle_up_rate_per_sec, 6);
     JF(",\"throttleDownRatePerSec\":", p.throttle_down_rate_per_sec, 6);

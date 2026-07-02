@@ -70,6 +70,15 @@ struct TelemetryPacket {
     float roll_rate_error_dps, pitch_rate_error_dps, yaw_rate_error_dps;
     float yaw_error_deg;
     float pid_roll_out, pid_pitch_out, pid_yaw_out;
+    uint8_t controller_mode;     // 0=PID, 1=LQI
+    const char* controller_name;
+    bool  lqi_active;
+    float lqi_roll_out, lqi_pitch_out, lqi_yaw_out;
+    float lqi_roll_angle_term, lqi_roll_rate_term, lqi_roll_i_term;
+    float lqi_pitch_angle_term, lqi_pitch_rate_term, lqi_pitch_i_term;
+    float lqi_yaw_angle_term, lqi_yaw_rate_term, lqi_yaw_i_term;
+    float lqi_roll_integrator, lqi_pitch_integrator, lqi_yaw_integrator;
+    bool  lqi_output_limited;
     bool  angle_mode_active, acro_mode_active;
     uint16_t rc_ch1_us, rc_ch2_us, rc_ch3_us, rc_ch4_us, rc_ch5_us;
     uint16_t rc_ch6_us, rc_ch7_us, rc_ch8_us, rc_ch9_us, rc_ch10_us;
@@ -126,6 +135,15 @@ struct TelemetryPacket {
     float roll_output_limit;
     float pitch_output_limit;
     float yaw_output_limit;
+
+    // Runtime controller selection and LQI tuning
+    float lqi_roll_k_angle,  lqi_roll_k_rate,  lqi_roll_k_int;
+    float lqi_pitch_k_angle, lqi_pitch_k_rate, lqi_pitch_k_int;
+    float lqi_yaw_k_angle,   lqi_yaw_k_rate,   lqi_yaw_k_int;
+    float lqi_i_limit;
+    float lqi_roll_output_limit;
+    float lqi_pitch_output_limit;
+    float lqi_yaw_output_limit;
 
     // Throttle shaping + motor output limits
     float throttle_expo;
@@ -206,6 +224,16 @@ struct TunePacket {
     bool has_pitch_output_limit;
     bool has_yaw_output_limit;
 
+    // Runtime controller selection and LQI tuning
+    bool has_controller_mode;
+    bool has_lqi_roll_k_angle,  has_lqi_roll_k_rate,  has_lqi_roll_k_int;
+    bool has_lqi_pitch_k_angle, has_lqi_pitch_k_rate, has_lqi_pitch_k_int;
+    bool has_lqi_yaw_k_angle,   has_lqi_yaw_k_rate,   has_lqi_yaw_k_int;
+    bool has_lqi_i_limit;
+    bool has_lqi_roll_output_limit;
+    bool has_lqi_pitch_output_limit;
+    bool has_lqi_yaw_output_limit;
+
     // Throttle shaping + motor output limits
     bool has_throttle_expo;
     bool has_throttle_up_rate_per_sec;
@@ -260,6 +288,15 @@ struct TunePacket {
     float roll_output_limit;
     float pitch_output_limit;
     float yaw_output_limit;
+
+    float controller_mode;
+    float lqi_roll_k_angle,  lqi_roll_k_rate,  lqi_roll_k_int;
+    float lqi_pitch_k_angle, lqi_pitch_k_rate, lqi_pitch_k_int;
+    float lqi_yaw_k_angle,   lqi_yaw_k_rate,   lqi_yaw_k_int;
+    float lqi_i_limit;
+    float lqi_roll_output_limit;
+    float lqi_pitch_output_limit;
+    float lqi_yaw_output_limit;
 
     float throttle_expo;
     float throttle_up_rate_per_sec;
