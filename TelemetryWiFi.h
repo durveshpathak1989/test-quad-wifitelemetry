@@ -71,6 +71,11 @@ struct TelemetryPacket {
     float yaw_error_deg;
     float pid_roll_out, pid_pitch_out, pid_yaw_out;
     bool  angle_mode_active, acro_mode_active;
+    bool  pos_hold_mode_active;
+    bool  pos_hold_requested;
+    bool  swc_high;
+    bool  xy_hold_available;
+    const char* pos_hold_status;
     uint16_t rc_ch1_us, rc_ch2_us, rc_ch3_us, rc_ch4_us, rc_ch5_us;
     uint16_t rc_ch6_us, rc_ch7_us, rc_ch8_us, rc_ch9_us, rc_ch10_us;
     uint32_t rc_failsafe_count;
@@ -91,7 +96,10 @@ struct TelemetryPacket {
     float control_authority_remaining;
     bool  roll_output_limited, pitch_output_limited, yaw_output_limited, rate_output_limited;
 
-    float throttle, rc_roll, rc_pitch, rc_yaw, rc_hz;
+    float throttle, protected_throttle, raw_throttle, descent_throttle_boost;
+    float descent_protect_min_active_m;
+    bool  descent_protect_active;
+    float rc_roll, rc_pitch, rc_yaw, rc_hz;
 
     float motor_fl, motor_fr, motor_rl, motor_rr;
     float motor_fl_pre_sat, motor_fr_pre_sat, motor_rl_pre_sat, motor_rr_pre_sat;
@@ -112,6 +120,16 @@ struct TelemetryPacket {
     float bmp_temp_c, bmp_pressure_hpa, bmp_altitude_m;
     float bmp_vertical_speed_mps;
     bool  bmp_valid;
+
+    float tof_distance_m;
+    float tof_raw_distance_m;
+    float tof_vertical_velocity_mps;
+    bool  tof_valid;
+    bool  tof_stale;
+    bool  tof_ready;
+    bool  tof_jump_rejected;
+    uint8_t tof_object_count;
+    uint32_t tof_age_ms;
 
     float cpu_core0_pct, cpu_core1_pct;
     bool  cpu_valid;
@@ -214,6 +232,7 @@ struct TunePacket {
     bool has_motor_max;
     bool has_throttle_cut;
     bool has_idle_ramp_end;
+    bool has_descent_protect_min_active_m;
 
     // Shared PID integrator clamp
     bool has_pid_ilimit;
@@ -268,6 +287,7 @@ struct TunePacket {
     float motor_max;
     float throttle_cut;
     float idle_ramp_end;
+    float descent_protect_min_active_m;
     float pid_ilimit;
 
     float pid_roll_kp,  pid_roll_ki,  pid_roll_kd;

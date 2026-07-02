@@ -447,6 +447,8 @@ void TelemetryWiFi::_handleTune()
     tryF("motor_max",               t.has_motor_max,               t.motor_max);
     tryF("throttle_cut",            t.has_throttle_cut,            t.throttle_cut);
     tryF("idle_ramp_end",           t.has_idle_ramp_end,           t.idle_ramp_end);
+    tryF("descent_protect_min_active_m", t.has_descent_protect_min_active_m, t.descent_protect_min_active_m);
+    if (!t.has_descent_protect_min_active_m) { tryF("descentProtectMinActiveM", t.has_descent_protect_min_active_m, t.descent_protect_min_active_m); }
     tryF("pid_ilimit",              t.has_pid_ilimit,              t.pid_ilimit);
 
     // Inner rate loop PID
@@ -533,7 +535,7 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
 #define JI(key, value) appendJsonInt(j, F(key), (int32_t)(value))
 #define JB(key, value) appendJsonBool(j, F(key), (value))
     String j;
-    j.reserve(6500);
+    j.reserve(7200);
     j += F("{\"ok\":true");
     JU(",\"tick\":", p.tick);
     j += F(",\"mode\":\"");
@@ -576,6 +578,11 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"mz\":", p.mz_uT, 3);
     JF(",\"imuTempC\":", p.imu_temp_c, 2);
     JF(",\"thr\":", p.throttle, 3);
+    JF(",\"rawThrottle\":", p.raw_throttle, 3);
+    JF(",\"protectedThrottle\":", p.protected_throttle, 3);
+    JF(",\"descentThrottleBoost\":", p.descent_throttle_boost, 3);
+    JF(",\"descentProtectMinActiveM\":", p.descent_protect_min_active_m, 3);
+    JB(",\"descentProtectActive\":", p.descent_protect_active);
     JF(",\"rcRoll\":", p.rc_roll, 3);
     JF(",\"rcPitch\":", p.rc_pitch, 3);
     JF(",\"rcYaw\":", p.rc_yaw, 3);
@@ -616,6 +623,15 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JF(",\"bmpPressureHpa\":", p.bmp_pressure_hpa, 2);
     JF(",\"bmpAltitudeM\":", p.bmp_altitude_m, 2);
     JB(",\"bmpValid\":", p.bmp_valid);
+    JF(",\"tofDistanceM\":", p.tof_distance_m, 3);
+    JF(",\"tofRawDistanceM\":", p.tof_raw_distance_m, 3);
+    JF(",\"tofVelocityMps\":", p.tof_vertical_velocity_mps, 3);
+    JB(",\"tofValid\":", p.tof_valid);
+    JB(",\"tofStale\":", p.tof_stale);
+    JB(",\"tofReady\":", p.tof_ready);
+    JB(",\"tofJumpRejected\":", p.tof_jump_rejected);
+    JU(",\"tofObjectCount\":", p.tof_object_count);
+    JU(",\"tofAgeMs\":", p.tof_age_ms);
     JF(",\"cpuCore0\":", p.cpu_core0_pct, 1);
     JF(",\"cpuCore1\":", p.cpu_core1_pct, 1);
     JB(",\"cpuValid\":", p.cpu_valid);
@@ -632,6 +648,13 @@ String TelemetryWiFi::_jsonFromPacket(const TelemetryPacket& p) const
     JU(",\"rcFailsafeCount\":", p.rc_failsafe_count);
     JB(",\"angleModeActive\":", p.angle_mode_active);
     JB(",\"acroModeActive\":", p.acro_mode_active);
+    JB(",\"posHoldModeActive\":", p.pos_hold_mode_active);
+    JB(",\"posHoldRequested\":", p.pos_hold_requested);
+    JB(",\"swcHigh\":", p.swc_high);
+    JB(",\"xyHoldAvailable\":", p.xy_hold_available);
+    j += F(",\"posHoldStatus\":\"");
+    j += p.pos_hold_status ? p.pos_hold_status : "INACTIVE";
+    j += '"';
     JU(",\"modeSwitchRawUs\":", p.mode_switch_raw_us);
     JU(",\"armSwitchRawUs\":", p.arm_switch_raw_us);
     JU(",\"auxTune1RawUs\":", p.aux_tune1_raw_us);
